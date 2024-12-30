@@ -23,7 +23,7 @@ class Formatter {
       return { formattedValue, className };
     }
   
-    static capitalize(value) {
+    static formatName(value) {
       if (typeof value !== 'string') return value;
       return value.replace(/\b\w/g, char => char.toUpperCase());
     }
@@ -39,6 +39,36 @@ class Formatter {
   
     static isNumeric(value) {
       return !isNaN(value) && value !== null && value !== '';
+    }
+  
+    static formatPhone(value) {
+      const numericValue = value.replace(/\D/g, '');
+      if (numericValue.length === 10) {
+        // Format: (XX) XXXX-XXXX
+        return numericValue.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+      } else if (numericValue.length === 11) {
+        // Format: (XX) XXXXX-XXXX
+        return numericValue.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      }
+      return value; // Return the original value if it's not a valid phone number
+    }
+  
+    static formatCPF(value) {
+      const numericValue = value.replace(/\D/g, '');
+      if (numericValue.length === 11) {
+        // Format: XXX.XXX.XXX-XX
+        return numericValue.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+      }
+      return value; // Return the original value if it's not a valid CPF
+    }
+  
+    static formatCNPJ(value) {
+      const numericValue = value.replace(/\D/g, '');
+      if (numericValue.length === 14) {
+        // Format: XX.XXX.XXX/XXXX-XX
+        return numericValue.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+      }
+      return value; // Return the original value if it's not a valid CNPJ
     }
   }
   
