@@ -1,27 +1,32 @@
 class Formatter {
-    static formatCurrency(value) {
-      const numericValue = Number(value);
-      if (numericValue === null || numericValue === undefined || isNaN(numericValue)) {
-        return { formattedValue: '-', className: ' text-dark' };
-      }
-  
-      if (numericValue === 0) {
-        return { formattedValue: 'R$ 0,00', className: ' text-dark' };
-      }
-  
-      const formattedValue = numericValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  
-      let className;
-      if (numericValue > 0) {
-        className = ' text-success';
-      } else if (numericValue < 0) {
-        className = ' text-danger';
-      } else {
-        className = ' text-dark';
-      }
-  
-      return { formattedValue, className };
+  static formatCurrency(value) {
+    const numericValue = Number(value);
+    
+    if (isNaN(numericValue) || numericValue === null || numericValue === undefined) {
+      return { formattedValue: '-', className: ' text-dark' };
     }
+  
+    if (numericValue === 0) {
+      return { formattedValue: 'R$ 0,00', className: ' text-dark' };
+    }
+  
+    const formattedValue = numericValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  
+    // Substitua o R$ formatado por um R$ padrão
+    const standardizedValue = formattedValue.replace("R$ ", "R$ ");
+  
+    let className;
+    if (numericValue > 0) {
+      className = ' text-success';
+    } else if (numericValue < 0) {
+      className = ' text-danger';
+    } else {
+      className = ' text-dark';
+    }
+  
+    return { formattedValue: standardizedValue, className };
+  }
+  
   
     static formatName(value) {
       if (typeof value !== 'string') return value;
@@ -29,13 +34,24 @@ class Formatter {
     }
   
     static formatDate(value) {
+      // Verifica se a data é válida
       if (isNaN(Date.parse(value))) return value;
-      const date = new Date(value);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = date.getFullYear();
+      
+      const dateParts = value.split('-'); // Divide a string 'yyyy-mm-dd'
+      
+      // Cria a data usando Date.UTC para garantir que não haja alteração de fuso horário
+      const date = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+      
+      // Garante o formato DD/MM/YYYY
+      const day = String(date.getUTCDate()).padStart(2, '0');
+      const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const year = date.getUTCFullYear();
+      
+      // Retorna no formato desejado
       return `${day}/${month}/${year}`;
     }
+    
+    
   
     static isNumeric(value) {
       return !isNaN(value) && value !== null && value !== '';

@@ -176,7 +176,7 @@ class DynamicTable {
 
   createSubTable(subData) {
     const subTable = document.createElement('table');
-    subTable.className = "table table-sm table-bordered";
+    subTable.className = "table table-sm table-bordered sub-table";
     subTable.style = "margin: 0;";
     subData.forEach(subRow => {
       const subRowElement = document.createElement('tr');
@@ -200,6 +200,7 @@ class DynamicTable {
   }
 
   clearTable() {
+    this.thead.innerHTML = '';
     this.tbody.innerHTML = '';
   }
 
@@ -211,3 +212,4 @@ class DynamicTable {
     }
   }
 }
+
